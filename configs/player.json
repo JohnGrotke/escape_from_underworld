@@ -1,0 +1,10 @@
+{
+    "width": 50,
+    "height": 50,
+    "image": "images/player.png",
+    "speed": 5,
+    "experience": 0,
+    "next_level_exp": 10,
+    "level": 1,
+    "shoot_cooldown": 10
+}

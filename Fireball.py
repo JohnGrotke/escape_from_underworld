@@ -1,17 +1,26 @@
 import pygame
+import json
+
 
 class Fireball:
-    def __init__(self, x, y, width, height, speed, direction):
+    def __init__(self, x, y, direction):
 
-        self.image = pygame.transform.scale(pygame.image.load(
-            'images/fireball.png').convert_alpha(), (width, height))
-        self.width = width
-        self.height = height
+        # Load configuration from the JSON file
+        with open("configs/fireball.json", 'r') as file:
+            data = json.load(file)
+
+        # Load the image
+        image_path = data.get('image_path', 'images/fireball.png')
+        self.image = pygame.transform.scale(pygame.image.load(image_path).convert_alpha(), (data.get('width', 50), data.get('height', 50)))
+
+        # Initialize other attributes from the JSON data
+        self.width = data.get('width', 50)
+        self.height = data.get('height', 50)
+        self.speed = data.get('speed', 5)
+
         self.x = x
         self.y = y
-        self.speed = speed
-        self.rect = pygame.Rect(x, y, width, height)
-
+        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
         self.direction = direction
 
     def update(self, screen):

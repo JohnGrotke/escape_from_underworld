@@ -18,26 +18,27 @@ def check_player_movement(keys):
         player.y += player_speed
 
 
-def update_enemies(enemies, player):
-    # Move enemies towards the player
-    for i, enemy in enumerate(enemies):
-        enemies[i].move(player.x, player.y)
-        screen.blit(enemy.image, (enemies[i].x, enemies[i].y))
+def update_enemies(m_enemies, player):
+    # Move m_enemies towards the player
+    for i, enemy in enumerate(m_enemies):
+        enemy.move(player.x, player.y)
+        enemy.draw(m_screen)
+        
 
         if check_collision(player.x, player.y, player.width, player.height, enemy.x, enemy.y, enemy.width, enemy.height):
             # player and enemy have collided, restart game
-            game_over(screen, screen_width, screen_height)
-            enemies = []
+            game_over(m_screen, screen_width, screen_height)
+            m_enemies = []
             break
 
 
-def spawn_enemies(enemies, spawn_rate):
-    # Spawn enemies randomly
+def spawn_enemies(m_enemies, spawn_rate):
+    # Spawn m_enemies randomly
     if random.random() < spawn_rate:
-        (enemy_x, enemy_y) = generate_enemy(screen, enemy_width, enemy_height)
-        enemy = Enemy(enemy_x, enemy_y, enemy_width, enemy_height, enemy_speed)
+        enemy = Fallen()
+        (enemy_x, enemy_y) = enemy.spawn(m_screen)
         print("spawning new enemy at (", enemy_x, ", ", enemy_y, ")")
-        enemies.append(enemy)
+        m_enemies.append(enemy)
 
 
 def check_collision(player_x, player_y, player_width, player_height, enemy_x, enemy_y, enemy_width, enemy_height):
@@ -46,12 +47,12 @@ def check_collision(player_x, player_y, player_width, player_height, enemy_x, en
     return player_rect.colliderect(enemy_rect)
 
 
-def game_over(screen, width, height):
+def game_over(m_screen, width, height):
     font = pygame.font.Font(None, 36)
     text = font.render(
         "Game Over - Press any key to restart", True, (255, 0, 0))
     text_rect = text.get_rect(center=(width // 2, height // 2))
-    screen.blit(text, text_rect)
+    m_screen.blit(text, text_rect)
     pygame.display.update()
     while True:
         for event in pygame.event.get():
@@ -59,33 +60,33 @@ def game_over(screen, width, height):
                 return
 
 
-def generate_enemy(screen, enemy_width, enemy_height):
+def generate_fallen(m_screen, enemy_width, enemy_height):
     side = random.choice(["top", "left", "right"])
     if side == "top":
-        x = random.randint(0, screen.get_width() - enemy_width)
+        x = random.randint(0, m_screen.get_width() - enemy_width)
         y = random.randint(-enemy_height, -1)
     # elif side == "bottom":
     #     x = random.randint(0, width - enemy_width)
     #     y = random.randint(width-enemy_height, -1)
     elif side == "left":
         x = random.randint(-enemy_width, -1)
-        y = random.randint(0, screen.get_height() - enemy_height)
+        y = random.randint(0, m_screen.get_height() - enemy_height)
     else:  # "right"
-        x = random.randint(screen.get_width() + 1,
-                           screen.get_width() + enemy_width)
-        y = random.randint(0, screen.get_height() - enemy_height)
+        x = random.randint(m_screen.get_width() + 1,
+                           m_screen.get_width() + enemy_width)
+        y = random.randint(0, m_screen.get_height() - enemy_height)
     return [x, y]
 
 
-def draw_fireballs(fireballs, screen):
-    for fireball in fireballs:
-        if (fireball.update(screen)):
-            fireball.draw(screen)
+def draw_fireballs(m_fireballs, m_screen):
+    for fireball in m_fireballs:
+        if (fireball.update(m_screen)):
+            fireball.draw(m_screen)
         else:
-            fireballs.remove(fireball)
+            m_fireballs.remove(fireball)
 
 
-def fire(fireballs, player):
+def fire(m_fireballs, player):
     fireball_x = player.x + player.width // 2 - fireball_width // 2
     fireball_y = player.y
 
@@ -101,22 +102,19 @@ def fire(fireballs, player):
 
     fireball = Fireball(fireball_x,
                         fireball_y,
-                        fireball_width,
-                        fireball_height,
-                        fireball_speed,
                         velocity_vector)
 
-    fireballs.append(fireball)
+    m_fireballs.append(fireball)
 
 
-def check_fireball_collision(fireballs, enemies):
+def check_fireball_collision(m_fireballs, m_enemies):
 
-    for i, fireball in enumerate(fireballs):
-        for j, enemy in enumerate(enemies):
+    for i, fireball in enumerate(m_fireballs):
+        for j, enemy in enumerate(m_enemies):
             if check_collision(fireball.x, fireball.y, fireball.width, fireball.height, enemy.x, enemy.y, enemy_width, enemy_height):
 
                 # fireball and enemy have collided, Remove them
-                enemies.remove(enemies[j])
+                m_enemies.remove(m_enemies[j])
                 player.gain_experience(1)
                 break
 
@@ -133,7 +131,7 @@ background_image = pygame.image.load('images/background.png')
 background_image = pygame.transform.scale(
     background_image, (screen_width, screen_height))
 
-screen = pygame.display.set_mode((screen_width, screen_height))
+m_screen = pygame.display.set_mode((screen_width, screen_height))
 
 pygame.display.set_caption("Escape From Underworld")
 
@@ -159,8 +157,8 @@ fireball_cooldown = 10
 fireball_frames_to_ignore = fireball_cooldown
 
 # Set up the enemy list
-enemies = []
-fireballs = []
+m_enemies = []
+m_fireballs = []
 
 # Set up the clock
 clock = pygame.time.Clock()
@@ -178,9 +176,9 @@ while running:
                 running = False
 
     # Draw the background image
-    screen.blit(background_image, (0, 0))
+    m_screen.blit(background_image, (0, 0))
     # Draw the player
-    screen.blit(player.image, (player.x, player.y))
+    m_screen.blit(player.image, (player.x, player.y))
 
     # Draw the HUD
     hud_font = pygame.font.Font(None, 36)
@@ -188,37 +186,38 @@ while running:
         "Level: {}".format(player.level), True, (255, 0, 0))
 
     health_bar_width = screen_width / 2
-    pygame.draw.rect(screen, 
-                     "red", 
-                     (screen_width/4, 
-                     screen_height/40, 
-                     int( screen_width/2), 
-                     screen_height/40))
-    pygame.draw.rect(screen,
-                     "green", 
-                     (screen_width/4, 
-                     screen_height/40, 
-                     int((screen_width/2) * (player.experience / player.next_level_exp)),
-                     screen_height/40
-                     ))
+    pygame.draw.rect(m_screen,
+                     "red",
+                     (screen_width/4,
+                      screen_height/40,
+                      int(screen_width/2),
+                      screen_height/40))
+    pygame.draw.rect(m_screen,
+                     "green",
+                     (screen_width/4,
+                      screen_height/40,
+                      int((screen_width/2) *
+                          (player.experience / player.next_level_exp)),
+                      screen_height/40
+                      ))
 
-    screen.blit(level_text, (10, 10))
+    m_screen.blit(level_text, (screen_width/20, screen_height/40))
 
     # Move the player
     keys = pygame.key.get_pressed()
     check_player_movement(keys)
 
     if keys[pygame.K_SPACE] and fireball_frames_to_ignore == 0:
-        fire(fireballs, player)
+        fire(m_fireballs, player)
         fireball_frames_to_ignore = fireball_cooldown
 
-    spawn_enemies(enemies, spawn_rate)
+    spawn_enemies(m_enemies, spawn_rate)
 
-    update_enemies(enemies, player)
+    update_enemies(m_enemies, player)
 
-    draw_fireballs(fireballs, screen)
+    draw_fireballs(m_fireballs, m_screen)
 
-    check_fireball_collision(fireballs, enemies)
+    check_fireball_collision(m_fireballs, m_enemies)
 
     if fireball_frames_to_ignore > 0:
         fireball_frames_to_ignore -= 1
@@ -226,8 +225,8 @@ while running:
     # Update the display
     pygame.display.flip()
 
-    # Clear the screen
-    screen.fill((0, 0, 0))
+    # Clear the m_screen
+    m_screen.fill((0, 0, 0))
 
     # Limit the frame rate
     clock.tick(fps)
