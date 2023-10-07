@@ -11,7 +11,8 @@ class Fireball:
 
         # Load the image
         image_path = data.get('image_path', 'images/fireball.png')
-        self.image = pygame.transform.scale(pygame.image.load(image_path).convert_alpha(), (data.get('width'), data.get('height')))
+        self.image = pygame.transform.scale(pygame.image.load(
+            image_path).convert_alpha(), (data.get('width'), data.get('height')))
 
         # Initialize other attributes from the JSON data
         self.width = data.get('width')
@@ -22,7 +23,6 @@ class Fireball:
         self.y = y
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
         self.direction = direction
-
 
     def update(self, screen):
         self.rect.move_ip(self.direction[0], self.direction[1])
@@ -35,7 +35,6 @@ class Fireball:
             return False  # fireball is off screen and needs to be deleted
         else:
             return True  # fireball is still on screen
-    
 
     def draw(self, screen):
         screen.blit(self.image, (self.x, self.y))

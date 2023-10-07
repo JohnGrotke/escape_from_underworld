@@ -1,6 +1,7 @@
 import pygame
 import random
 
+
 class Enemy:
     def __init__(self, x, y, width, height, speed):
 
@@ -34,12 +35,14 @@ class Enemy:
             y = -screen.get_height()//10
         elif side == "left":
             x = -screen.get_width()//10
-            y = random.randint(0, screen.get_height() - screen.get_height()//10)
+            y = random.randint(0, screen.get_height() -
+                               screen.get_height()//10)
         else:  # "right"
             x = screen.get_width() + screen.get_width()//10
-            y = random.randint(0, screen.get_height() - screen.get_height()//10)
-        
-        print("spawning new enemy at on ", side , "(", x, ", ", y, ")")
+            y = random.randint(0, screen.get_height() -
+                               screen.get_height()//10)
+
+        print("spawning new enemy at on ", side, "(", x, ", ", y, ")")
         self.x = x
         self.y = y
 
