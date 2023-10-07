@@ -1,20 +1,36 @@
 import pygame
 import random
+import math
+import json
 
 
 class Enemy:
-    def __init__(self, x, y, width, height, speed):
+    def __init__(self, screen):
 
-        self.width = width
-        self.height = height
-        self.image = pygame.transform.scale(pygame.image.load(
-            'images/fallen.png').convert_alpha(), (self.width, self.height))
-        self.x = x
-        self.y = y
-        self.speed = speed
-        self.dx = 0
-        self.dy = 0
-        self.rect = pygame.Rect(x, y, width, height)
+        # Load configuration from the JSON file
+        with open("configs/fallen.json", 'r') as file:
+            data = json.load(file)
+
+        # Load the image
+        image_path = data.get('image_path', 'images/fallen.png')
+        
+        self.screen = screen
+        self.width = data.get('width') / 100 * screen.get_width()
+        self.height = data.get('height') / 100 * screen.get_height()
+        self.image = pygame.transform.scale(
+            pygame.image.load(image_path).convert_alpha(), (self.width, self.height))
+
+        self.screen_normalization = math.sqrt(
+            screen.get_width() ** 2 + screen.get_height() ** 2) / 2
+        self.speed_percentage = data.get(
+            'speed_percentage') / 100 * self.screen_normalization
+
+        self.dx = data.get('dx')
+        self.dy = data.get('dy')
+
+        self.x = 0
+        self.y = 0
+        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
     def move(self, goal_x, goal_y):
         dx = goal_x - self.x
@@ -23,28 +39,26 @@ class Enemy:
         if dist > 0:
             dx = dx / dist
             dy = dy / dist
-            self.dx = dx * self.speed
-            self.dy = dy * self.speed
+            self.dx = dx * self.speed_percentage
+            self.dy = dy * self.speed_percentage
         self.x = self.x + self.dx
         self.y = self.y + self.dy
 
-    def spawn(self, screen):
+    def spawn(self):
         side = random.choice(["top", "left", "right"])
         if side == "top":
-            x = random.randint(0, screen.get_width() - screen.get_width()/10)
-            y = -screen.get_height()//10
+            self.x = random.randint(0, self.screen.get_width() - self.screen.get_width()/10)
+            self.y = -self.screen.get_height()//10
         elif side == "left":
-            x = -screen.get_width()//10
-            y = random.randint(0, screen.get_height() -
-                               screen.get_height()//10)
+            self.x = -self.screen.get_width()//10
+            self.y = random.randint(0, self.screen.get_height() -
+                               self.screen.get_height()//10)
         else:  # "right"
-            x = screen.get_width() + screen.get_width()//10
-            y = random.randint(0, screen.get_height() -
-                               screen.get_height()//10)
+            self.x = self.screen.get_width() + self.screen.get_width()//10
+            self.y = random.randint(0, self.screen.get_height() -
+                               self.screen.get_height()//10)
 
-        print("spawning new enemy at on ", side, "(", x, ", ", y, ")")
-        self.x = x
-        self.y = y
+        print("spawning new enemy at on ", side, "(", self.x, ", ", self.y, ")")
 
-    def draw(self, screen):
-        screen.blit(self.image, (self.x, self.y))
+    def draw(self):
+        self.screen.blit(self.image, (self.x, self.y))

@@ -1,20 +1,26 @@
 import pygame
 import json
+import math
 from Fireball import Fireball
 
 
 class Player:
-    def __init__(self, x, y):
+    def __init__(self, screen):
 
         with open("configs/player.json", 'r') as file:
             data = json.load(file)
 
-        self.width = data.get('width')
-        self.height = data.get('height')
+        self.screen = screen
+        self.width = data.get('width') / 100 * screen.get_width()
+        self.height = data.get('height') / 100 * screen.get_height()
         image_path = data.get('image')
         self.image = pygame.transform.scale(pygame.image.load(
             image_path).convert_alpha(), (self.width, self.height))
-        self.speed = data.get('speed')
+
+        self.screen_normalization = math.sqrt(
+            screen.get_width() ** 2 + screen.get_height() ** 2) / 2
+        self.speed_percentage = data.get(
+            'speed_percentage') / 100 * self.screen_normalization
         self.experience = 0
         self.next_level_exp = 10
         self.level = 1
@@ -22,8 +28,8 @@ class Player:
         self.frames_since_last_shot = 0
         self.weapon_type = data.get('weapon_type')
 
-        self.x = x
-        self.y = y
+        self.x = self.screen.get_width() // 2
+        self.y = self.screen.get_height() // 2
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
     def set_level(self, level):
@@ -51,7 +57,8 @@ class Player:
                 direction_vector = pygame.math.Vector2(
                     mouse_x - self.x, mouse_y - self.y).normalize()
 
-                fireball = Fireball(self.x,
+                fireball = Fireball(self.screen,
+                                    self.x,
                                     self.y,
                                     direction_vector)
 
@@ -65,13 +72,13 @@ class Player:
             print("unsupported weapon_type: {}".format(self.weapon_type))
 
     def move_left(self):
-        self.x -= self.speed
+        self.x -= self.speed_percentage
 
     def move_right(self):
-        self.x += self.speed
+        self.x += self.speed_percentage
 
     def move_down(self):
-        self.y += self.speed
+        self.y += self.speed_percentage
 
     def move_up(self):
-        self.y -= self.speed
+        self.y -= self.speed_percentage

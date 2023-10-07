@@ -1,3 +1,4 @@
+from sys import base_prefix
 import pygame
 import random
 from Player import Player
@@ -17,7 +18,7 @@ class Game:
 
         self.screen_width = data.get('screen_width')
         self.screen_height = data.get('screen_height')
-        self.m_screen = pygame.display.set_mode(
+        self.screen = pygame.display.set_mode(
             (self.screen_width, self.screen_height))
         pygame.display.set_caption(data.get('title'))
 
@@ -27,13 +28,13 @@ class Game:
 
         self.spawn_rate = data.get('enemy_spawn_rate')
 
-        self.player = Player(self.screen_width // 2, self.screen_height // 2)
+        self.player = Player(self.screen)
 
         self.clock = pygame.time.Clock()
         self.fps = data.get('fps')
 
     def initialize_game(self):
-        self.player = Player(self.screen_width // 2, self.screen_height // 2)
+        self.player = Player(self.screen)
         self.fireballs = []
         self.enemies = []
 
@@ -48,7 +49,7 @@ class Game:
             "Game Over - Press any key to restart", True, (255, 0, 0))
         text_rect = text.get_rect(
             center=(self.screen_width // 2, self.screen_height // 2))
-        self.m_screen.blit(text, text_rect)
+        self.screen.blit(text, text_rect)
         pygame.display.update()
         while True:
             for event in pygame.event.get():
@@ -58,30 +59,29 @@ class Game:
 
     def draw_background(self):
 
-        self.m_screen.blit(self.background_image, (0, 0))
-        self.m_screen.blit(self.player.image, (self.player.x, self.player.y))
+        self.screen.blit(self.background_image, (0, 0))
+        self.screen.blit(self.player.image, (self.player.x, self.player.y))
 
     def draw_hud(self):
         hud_font = pygame.font.Font(None, 36)
         level_text = hud_font.render("Level: {}, {}/{}".format(self.player.level,
                                      self.player.experience, self.player.next_level_exp), True, (255, 0, 0))
 
-        pygame.draw.rect(self.m_screen,
-                         "red",
-                         (self.screen_width / 4,
-                             self.screen_height / 40,
-                             int(self.screen_width / 2),
-                             self.screen_height / 40))
-        pygame.draw.rect(self.m_screen,
-                         "green",
-                         (self.screen_width / 4,
-                             self.screen_height / 40,
-                             int((self.screen_width / 2) *
-                                 (self.player.experience / self.player.next_level_exp)),
-                             self.screen_height / 40
-                          ))
+        bar_x = self.screen_width / 4
+        bar_y = self.screen_height / 40
+        bar_width = self.screen_width / 2
+        bar_height = self.screen_height // 40
+        bar_percentage = (self.screen_width / 2) * \
+            (self.player.experience / self.player.next_level_exp)
 
-        self.m_screen.blit(
+        pygame.draw.rect(self.screen,
+                         "red",
+                         (bar_x, bar_y, bar_width, bar_height))
+        pygame.draw.rect(self.screen,
+                         "green",
+                         (bar_x, bar_y, bar_percentage, bar_height))
+
+        self.screen.blit(
             level_text, (self.screen_width / 20, self.screen_height / 40))
 
     def check_player_movement(self, keys):
@@ -97,7 +97,7 @@ class Game:
     def update_enemies(self):
         for enemy in self.enemies:
             enemy.move(self.player.x, self.player.y)
-            enemy.draw(self.m_screen)
+            enemy.draw()
 
             if self.check_collision(self.player, enemy):
                 self.game_over()
@@ -106,8 +106,8 @@ class Game:
 
     def spawn_enemies(self):
         if random.random() < self.spawn_rate:
-            enemy = Fallen()
-            enemy.spawn(self.m_screen)
+            enemy = Fallen(self.screen)
+            enemy.spawn()
             self.enemies.append(enemy)
 
     def check_collision(self, obj_1, obj_2):
@@ -117,8 +117,8 @@ class Game:
 
     def draw_fireballs(self):
         for fireball in self.fireballs:
-            if fireball.update(self.m_screen):
-                fireball.draw(self.m_screen)
+            if fireball.update(self.screen):
+                fireball.draw(self.screen)
             else:
                 self.fireballs.remove(fireball)
 
@@ -168,4 +168,4 @@ class Game:
             self.check_player_movement(keys)
 
             pygame.display.flip()
-            self.m_screen.fill((0, 0, 0))
+            self.screen.fill((0, 0, 0))

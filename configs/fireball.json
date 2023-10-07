@@ -1,6 +1,6 @@
 {
     "image_path": "images/fireball.png",
-    "width": 30,
-    "height": 30,
-    "speed": 30
+    "width": 1.5,
+    "height": 1.5,
+    "speed_percentage": 2
 }

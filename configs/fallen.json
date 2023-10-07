@@ -1,8 +1,8 @@
 {
     "image_path": "images/fallen.png",
-    "width": 30,
-    "height": 30,
-    "speed": 3,
+    "width": 2,
+    "height": 4,
+    "speed_percentage": 0.5,
     "dx": 0,
     "dy": 0
 }
