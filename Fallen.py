@@ -12,12 +12,12 @@ class Fallen(Enemy):
 
         # Load the image
         image_path = data.get('image_path', 'images/fallen.png')
-        self.image = pygame.transform.scale(
-            pygame.image.load(image_path).convert_alpha(), (30, 30))
-
-        # Initialize other attributes from the JSON data
         self.width = data.get('width')
         self.height = data.get('height')
+        self.image = pygame.transform.scale(
+            pygame.image.load(image_path).convert_alpha(), (self.width, self.height))
+
+        # Initialize other attributes from the JSON data
         self.speed = data.get('speed')
         self.dx = data.get('dx')
         self.dy = data.get('dy')

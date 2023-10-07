@@ -27,19 +27,17 @@ class Game:
         self.player = Player(self.screen_width // 2, self.screen_height // 2 )
 
         self.fireball_frames_to_ignore = self.player.shoot_cooldown
-        self.fireballs = []
-
-        self.enemies = []
 
         self.clock = pygame.time.Clock()
         self.fps = data.get('fps')
 
     def initialize_game(self):
         self.player = Player(self.screen_width // 2, self.screen_height // 2 )
+        self.fireballs = []
+        self.enemies = []
 
     def reset_game(self):
         self.player = Player(self.screen_width // 2, self.screen_height // 2 )
-    
         self.fireballs = []
         self.enemies = []  
 
@@ -119,9 +117,8 @@ class Game:
             self.m_screen.blit(self.player.image, (self.player.x, self.player.y))
 
             hud_font = pygame.font.Font(None, 36)
-            level_text = hud_font.render("Level: {}".format(self.player.level), True, (255, 0, 0))
+            level_text = hud_font.render("Level: {}, {}/{}".format(self.player.level, self.player.experience, self.player.next_level_exp), True, (255, 0, 0))
 
-            health_bar_width = self.screen_width / 2
             pygame.draw.rect(self.m_screen,
                              "red",
                              (self.screen_width / 4,

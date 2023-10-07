@@ -15,9 +15,9 @@ class Player:
         self.image = pygame.transform.scale(pygame.image.load(
             image_path).convert_alpha(), (self.width, self.height))
         self.speed = data.get('speed')
-        self.experience = data.get('experience')
-        self.next_level_exp = data.get('next_level_exp')
-        self.level = data.get('level')
+        self.experience = 0
+        self.next_level_exp = 10
+        self.level = 1
         self.shoot_cooldown = data.get('shoot_cooldown')
         self.weapon_type = data.get('weapon_type')
         
@@ -25,11 +25,20 @@ class Player:
         self.y = y
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
+    def set_level(self, level):
+        self.level = level
+        self.next_level_exp = self.level * 10
+
+    def set_experience(self, experience):
+        self.experience = experience
+        self.next_level_exp += self.level * 10
+
     def gain_experience(self, exp):
         self.experience = self.experience + exp
         while (self.experience >= self.next_level_exp):
-            self.level += 1
             self.experience -= self.next_level_exp
+            self.next_level_exp += self.level * 10
+            self.level += 1
 
     def shoot(self, projectiles):
         

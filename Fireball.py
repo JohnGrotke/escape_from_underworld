@@ -11,12 +11,12 @@ class Fireball:
 
         # Load the image
         image_path = data.get('image_path', 'images/fireball.png')
-        self.image = pygame.transform.scale(pygame.image.load(image_path).convert_alpha(), (data.get('width', 50), data.get('height', 50)))
+        self.image = pygame.transform.scale(pygame.image.load(image_path).convert_alpha(), (data.get('width'), data.get('height')))
 
         # Initialize other attributes from the JSON data
-        self.width = data.get('width', 50)
-        self.height = data.get('height', 50)
-        self.speed = data.get('speed', 5)
+        self.width = data.get('width')
+        self.height = data.get('height')
+        self.speed = data.get('speed')
 
         self.x = x
         self.y = y
