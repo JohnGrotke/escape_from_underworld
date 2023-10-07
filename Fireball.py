@@ -23,16 +23,19 @@ class Fireball:
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
         self.direction = direction
 
+
     def update(self, screen):
         self.rect.move_ip(self.direction[0], self.direction[1])
-        self.x += self.direction[0]
-        self.y += self.direction[1]
+        self.x += self.direction[0] * self.speed
+        self.y += self.direction[1] * self.speed
 
         # print("x: ", self.x, " y: ", self.y)
         if self.x < 0 or self.x > screen.get_width() or self.y < 0 or self.y > screen.get_height():
+            print("Fireball went off screen and was deleted")
             return False  # fireball is off screen and needs to be deleted
         else:
             return True  # fireball is still on screen
+    
 
     def draw(self, screen):
         screen.blit(self.image, (self.x, self.y))

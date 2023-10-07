@@ -16,11 +16,11 @@ class Fallen(Enemy):
             pygame.image.load(image_path).convert_alpha(), (30, 30))
 
         # Initialize other attributes from the JSON data
-        self.width = data.get('width', 30)
-        self.height = data.get('height', 30)
-        self.speed = data.get('speed', 0)
-        self.dx = data.get('dx', 0)
-        self.dy = data.get('dy', 0)
+        self.width = data.get('width')
+        self.height = data.get('height')
+        self.speed = data.get('speed')
+        self.dx = data.get('dx')
+        self.dy = data.get('dy')
 
         self.x = 0
         self.y = 0

@@ -1,0 +1,8 @@
+{
+    "screen_width": 1920,
+    "screen_height": 1080,
+    "background_image": "images/background.png",
+    "title": "Escape From Underworld",
+    "enemy_spawn_rate": 0.02,
+    "fps": 60
+}

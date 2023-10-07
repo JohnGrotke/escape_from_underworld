@@ -22,28 +22,26 @@ class Enemy:
         if dist > 0:
             dx = dx / dist
             dy = dy / dist
-            enemy_speed = min(dist, 2)
-            self.dx = dx * enemy_speed
-            self.dy = dy * enemy_speed
+            self.dx = dx * self.speed
+            self.dy = dy * self.speed
         self.x = self.x + self.dx
         self.y = self.y + self.dy
 
     def spawn(self, screen):
         side = random.choice(["top", "left", "right"])
         if side == "top":
-            self.x = random.randint(0, screen.get_width() - self.width)
-            self.y = random.randint(-self.height, -1)
-        # elif side == "bottom":
-        #     x = random.randint(0, width - self.width)
-        #     y = random.randint(width-self.height, -1)
+            x = random.randint(0, screen.get_width() - screen.get_width()/10)
+            y = -screen.get_height()//10
         elif side == "left":
-            self.x = random.randint(-self.width, -1)
-            self.y = random.randint(0, screen.get_height() - self.height)
+            x = -screen.get_width()//10
+            y = random.randint(0, screen.get_height() - screen.get_height()//10)
         else:  # "right"
-            self.x = random.randint(screen.get_width() + 1,
-                            screen.get_width() + self.width)
-            self.y = random.randint(0, screen.get_height() - self.height)
-        return [self.x, self.y]
+            x = screen.get_width() + screen.get_width()//10
+            y = random.randint(0, screen.get_height() - screen.get_height()//10)
+        
+        print("spawning new enemy at on ", side , "(", x, ", ", y, ")")
+        self.x = x
+        self.y = y
 
     def draw(self, screen):
         screen.blit(self.image, (self.x, self.y))
