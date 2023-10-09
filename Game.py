@@ -5,7 +5,9 @@ from Player import Player
 from Enemy import Enemy
 from Fallen import Fallen
 from Fireball import Fireball
+from Upgrades import Upgrades
 import json
+import time
 
 
 class Game:
@@ -29,6 +31,8 @@ class Game:
         self.spawn_rate = data.get('enemy_spawn_rate')
 
         self.player = Player(self.screen)
+        self.upgrades = Upgrades()
+        self.last_player_level = 1
 
         self.clock = pygame.time.Clock()
         self.fps = data.get('fps')
@@ -39,9 +43,10 @@ class Game:
         self.enemies = []
 
     def reset_game(self):
-        self.player = Player(self.screen_width // 2, self.screen_height // 2)
+        self.player = Player(self.screen)
         self.fireballs = []
         self.enemies = []
+        self.last_player_level = 1
 
     def game_over(self):
         font = pygame.font.Font(None, 36)
@@ -65,14 +70,14 @@ class Game:
     def draw_hud(self):
         hud_font = pygame.font.Font(None, 36)
         level_text = hud_font.render("Level: {}, {}/{}".format(self.player.level,
-                                     self.player.experience, self.player.next_level_exp), True, (255, 0, 0))
+                                     self.player.exp, self.player.next_level_exp), True, (255, 0, 0))
 
         bar_x = self.screen_width / 4
         bar_y = self.screen_height / 40
         bar_width = self.screen_width / 2
         bar_height = self.screen_height // 40
         bar_percentage = (self.screen_width / 2) * \
-            (self.player.experience / self.player.next_level_exp)
+            (self.player.exp / self.player.next_level_exp)
 
         pygame.draw.rect(self.screen,
                          "red",
@@ -127,7 +132,7 @@ class Game:
             for j, enemy in enumerate(self.enemies):
                 if self.check_collision(fireball, enemy):
                     self.enemies.remove(self.enemies[j])
-                    self.player.gain_experience(1)
+                    self.player.gain_exp(1)
                     break
 
     def handle_shooting(self, keys):
@@ -136,6 +141,109 @@ class Game:
 
         if keys[pygame.K_SPACE]:
             self.player.shoot(self.fireballs)
+
+    def level_up(self):
+
+        if self.last_player_level < self.player.level:
+            self.last_player_level += 1
+            font = pygame.font.Font(None, 36)
+            text = font.render(
+                "LEVEL UP", True, (255, 0, 0))
+            text_rect = text.get_rect(
+                center=(self.screen_width // 2, self.screen_height / 40))
+
+            option_1_x = self.screen_width / 4
+            option_1_y = self.screen_height / 10
+            option_1_width = self.screen_width / 2
+            option_1_height = self.screen_height // 5
+
+            pygame.draw.rect(self.screen,
+                             "red",
+                             (option_1_x, option_1_y, option_1_width, option_1_height))
+            choice_1 = self.upgrades.random_upgrade()
+            choice_2 = self.upgrades.random_upgrade()
+            choice_3 = self.upgrades.random_upgrade()
+
+            option_1_text = font.render(choice_1.get(
+                "upgrade_text"), True, (255, 255, 255))
+            option_1_text_x = option_1_x + option_1_width // 2 - option_1_text.get_width() // 2
+            option_1_text_y = option_1_y + option_1_height // 2 - \
+                option_1_text.get_height() // 2
+
+            self.screen.blit(option_1_text, (option_1_text_x, option_1_text_y))
+
+            option_2_x = self.screen_width / 4
+            option_2_y = 4 * self.screen_height / 10
+            option_2_width = self.screen_width / 2
+            option_2_height = self.screen_height // 5
+
+            pygame.draw.rect(self.screen,
+                             "red",
+                             (option_2_x, option_2_y, option_2_width, option_2_height))
+
+            option_2_text = font.render(choice_2.get(
+                "upgrade_text"), True, (255, 255, 255))
+            option_2_text_x = option_2_x + option_2_width // 2 - option_2_text.get_width() // 2
+            option_2_text_y = option_2_y + option_2_height // 2 - \
+                option_2_text.get_height() // 2
+
+            self.screen.blit(option_2_text, (option_2_text_x, option_2_text_y))
+
+            option_3_x = self.screen_width / 4
+            option_3_y = 7 * self.screen_height / 10
+            option_3_width = self.screen_width / 2
+            option_3_height = self.screen_height // 5
+
+            pygame.draw.rect(self.screen,
+                             "red",
+                             (option_3_x, option_3_y, option_3_width, option_3_height))
+
+            option_3_text = font.render(choice_3.get(
+                "upgrade_text"), True, (255, 255, 255))
+            option_3_text_x = option_3_x + option_3_width // 2 - option_3_text.get_width() // 2
+            option_3_text_y = option_3_y + option_3_height // 2 - \
+                option_3_text.get_height() // 2
+
+            self.screen.blit(option_3_text, (option_3_text_x, option_3_text_y))
+
+            self.screen.blit(text, text_rect)
+            pygame.display.update()
+
+            choice_1_selected = False
+            choice_2_selected = False
+            choice_3_selected = False
+            choice_selected = False
+
+            while not choice_selected:
+                for event in pygame.event.get():
+
+                    if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                        choice_selected = True
+                        self.reset_game()
+                        return
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        choice_1_selected = option_1_x <= event.pos[0] <= option_1_x + \
+                            option_1_width and option_1_y <= event.pos[1] <= option_1_y + \
+                            option_1_height
+                        choice_2_selected = option_2_x <= event.pos[0] <= option_2_x + \
+                            option_2_width and option_2_y <= event.pos[1] <= option_2_y + \
+                            option_2_height
+                        choice_3_selected = option_3_x <= event.pos[0] <= option_2_x + \
+                            option_3_width and option_3_y <= event.pos[1] <= option_3_y + \
+                            option_3_height
+
+                        if (choice_1_selected or choice_2_selected or choice_3_selected):
+                            if choice_1_selected:
+                                self.upgrades.apply_upgrade(
+                                    self.player, choice_1)
+                            elif choice_2_selected:
+                                self.upgrades.apply_upgrade(
+                                    self.player, choice_2)
+                            else:
+                                self.upgrades.apply_upgrade(
+                                    self.player, choice_3)
+
+                            choice_selected = True
 
     def run_game(self):
         self.initialize_game()
@@ -166,6 +274,8 @@ class Game:
             self.check_fireball_collision()
 
             self.check_player_movement(keys)
+
+            self.level_up()
 
             pygame.display.flip()
             self.screen.fill((0, 0, 0))

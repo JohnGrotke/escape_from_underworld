@@ -2,7 +2,7 @@
     "width": 3,
     "height": 5,
     "image": "images/player.png",
-    "speed_percentage": 1,
+    "speed": 1,
     "shoot_cooldown": 10,
     "weapon_type": "fireball"
 }
