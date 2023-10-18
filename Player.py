@@ -32,7 +32,9 @@ class Player:
             "height": self.height,
             "speed": data.get('speed') / 100 * self.screen_normalization,
             "shoot_cooldown": data.get('shoot_cooldown'),
-            "weapon_type": data.get('weapon_type')
+            "weapon_type": data.get('weapon_type'),
+            "projectile_speed": data.get('projectile_speed'),
+            "projectile_size": data.get('projectile_size')
         }
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
@@ -64,7 +66,9 @@ class Player:
                 fireball = Fireball(self.screen,
                                     self.x,
                                     self.y,
-                                    direction_vector)
+                                    direction_vector,
+                                    self.stats_dict.get("projectile_speed"),
+                                    self.stats_dict.get("projectile_size"))
 
                 projectiles.append(fireball)
                 print("Added fireball at {}, {}".format(self.x, self.y))
