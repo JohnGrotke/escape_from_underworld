@@ -13,7 +13,7 @@ class Fallen(Enemy):
 
         # Load the image
         image_path = data.get('image_path', 'images/fallen.png')
-        
+
         self.screen = screen
         self.width = data.get('width') / 100 * screen.get_width()
         self.height = data.get('height') / 100 * screen.get_height()
@@ -28,6 +28,18 @@ class Fallen(Enemy):
         self.dx = data.get('dx')
         self.dy = data.get('dy')
 
+        self.health = 10
+        self.immunity = False
+        self.immunity_frames = 0
+
         self.x = 0
         self.y = 0
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
+
+    def hit_killed(self, projectile):
+        if not self.immunity:
+            self.health -= projectile.damage
+            self.immunity = True
+            self.immunity_frames = 6
+
+        return self.health <= 0

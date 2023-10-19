@@ -34,7 +34,10 @@ class Player:
             "shoot_cooldown": data.get('shoot_cooldown'),
             "weapon_type": data.get('weapon_type'),
             "projectile_speed": data.get('projectile_speed'),
-            "projectile_size": data.get('projectile_size')
+            "projectile_size": data.get('projectile_size'),
+            "projectile_damage": data.get('projectile_damage'),
+            "projectile_piercing": data.get('projectile_piercing'),
+            "health": data.get('health'),
         }
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
@@ -53,7 +56,6 @@ class Player:
             self.level += 1
 
     def shoot(self, projectiles):
-
         if (self.stats_dict.get("weapon_type") == "fireball"):
             if (self.frames_since_last_shot > self.stats_dict["shoot_cooldown"]):
                 self.frames_since_last_shot = 0
@@ -68,7 +70,9 @@ class Player:
                                     self.y,
                                     direction_vector,
                                     self.stats_dict.get("projectile_speed"),
-                                    self.stats_dict.get("projectile_size"))
+                                    self.stats_dict.get("projectile_size"),
+                                    self.stats_dict.get("projectile_damage"),
+                                    self.stats_dict.get("projectile_piercing"))
 
                 projectiles.append(fireball)
                 print("Added fireball at {}, {}".format(self.x, self.y))

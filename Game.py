@@ -131,8 +131,14 @@ class Game:
         for i, fireball in enumerate(self.fireballs):
             for j, enemy in enumerate(self.enemies):
                 if self.check_collision(fireball, enemy):
-                    self.enemies.remove(self.enemies[j])
-                    self.player.gain_exp(1)
+                    if enemy.hit_killed(fireball):
+                        self.enemies.remove(enemy)
+                        self.player.gain_exp(1)
+                    else:
+                        enemy.immunity = True
+                    if not fireball.pierce():
+                        self.fireballs.remove(fireball)
+
                     break
 
     def handle_shooting(self, keys):

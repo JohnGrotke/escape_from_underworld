@@ -18,6 +18,16 @@ class Upgrades:
             player.stats_dict[upgrade.get(
                 "effected_variable")] *= upgrade.get("upgrade_amount")
 
+        elif upgrade.get("effect_operation") == "divide":
+            player.stats_dict[upgrade.get(
+                "effected_variable")] /= upgrade.get("upgrade_amount")
+
         elif upgrade.get("effect_operation") == "addition":
             player.stats_dict[upgrade.get(
                 "effected_variable")] += upgrade.get("upgrade_amount")
+
+        elif upgrade.get("effect_operation") == "subtract":
+            player.stats_dict[upgrade.get(
+                "effected_variable")] -= upgrade.get("upgrade_amount")
+        else:
+            print("Unknown upgrade operation")
