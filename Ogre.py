@@ -4,11 +4,11 @@ from Enemy import Enemy
 import math
 
 
-class Fallen(Enemy):
+class Ogre(Enemy):
     def __init__(self, screen):
 
        # Load configuration from the JSON file
-        with open("configs/fallen.json", 'r') as file:
+        with open("configs/ogre.json", 'r') as file:
             data = json.load(file)
 
         # Load the image
@@ -28,7 +28,7 @@ class Fallen(Enemy):
         self.dy = data.get('dy')
         self.exp = data.get('exp')
 
-        self.health = 10
+        self.health = 100
         self.immunity = False
         self.immunity_frames = 0
 

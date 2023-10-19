@@ -1,0 +1,9 @@
+{
+    "image_path": "images/ogre.png",
+    "width": 2,
+    "height": 4,
+    "speed": 2,
+    "dx": 0,
+    "dy": 0,
+    "exp": 10
+}

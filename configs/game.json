@@ -3,6 +3,7 @@
     "screen_height": 1080,
     "background_image": "images/background.png",
     "title": "Escape From Underworld",
-    "enemy_spawn_rate": 0.1,
+    "fallen_spawn_rate": 0.1,
+    "ogre_spawn_rate": 0.005,
     "fps": 144
 }

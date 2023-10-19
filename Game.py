@@ -4,6 +4,7 @@ import random
 from Player import Player
 from Enemy import Enemy
 from Fallen import Fallen
+from Ogre import Ogre
 from Fireball import Fireball
 from Upgrades import Upgrades
 import json
@@ -28,7 +29,8 @@ class Game:
         self.background_image = pygame.transform.scale(
             self.background_image, (self.screen_width, self.screen_height))
 
-        self.spawn_rate = data.get('enemy_spawn_rate')
+        self.fallen_spawn_rate = data.get('fallen_spawn_rate')
+        self.ogre_spawn_rate = data.get('ogre_spawn_rate')
 
         self.player = Player(self.screen)
         self.upgrades = Upgrades()
@@ -110,7 +112,11 @@ class Game:
                 break
 
     def spawn_enemies(self):
-        if random.random() < self.spawn_rate:
+        if random.random() < self.ogre_spawn_rate:
+            enemy = Ogre(self.screen)
+            enemy.spawn()
+            self.enemies.append(enemy)
+        elif random.random() < self.fallen_spawn_rate:
             enemy = Fallen(self.screen)
             enemy.spawn()
             self.enemies.append(enemy)
@@ -133,7 +139,7 @@ class Game:
                 if self.check_collision(fireball, enemy):
                     if enemy.hit_killed(fireball):
                         self.enemies.remove(enemy)
-                        self.player.gain_exp(1)
+                        self.player.gain_exp(enemy.exp)
                     else:
                         enemy.immunity = True
                     if not fireball.pierce():

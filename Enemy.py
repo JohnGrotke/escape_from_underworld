@@ -20,10 +20,7 @@ class Enemy:
         self.image = pygame.transform.scale(
             pygame.image.load(image_path).convert_alpha(), (self.width, self.height))
 
-        self.screen_normalization = math.sqrt(
-            screen.get_width() ** 2 + screen.get_height() ** 2) / 2
-        self.speed_percentage = data.get(
-            'speed_percentage') / 100 * self.screen_normalization
+        self.speed = data.get('speed')
 
         self.dx = data.get('dx')
         self.dy = data.get('dy')
@@ -41,8 +38,8 @@ class Enemy:
         if dist > 0:
             dx = dx / dist
             dy = dy / dist
-            self.dx = dx * self.speed_percentage
-            self.dy = dy * self.speed_percentage
+            self.dx = dx * self.speed
+            self.dy = dy * self.speed
         self.x = self.x + self.dx
         self.y = self.y + self.dy
 
