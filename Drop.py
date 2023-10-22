@@ -1,9 +1,7 @@
 import pygame
 
-
 class Drop:
-    def __init__(self, screen, x, y):
-        image_path = "images/gold_coin.png"
+    def __init__(self, screen, x, y, image_path, value):
         self.image = pygame.image.load(image_path).convert_alpha()
         self.x = x
         self.y = y
@@ -11,7 +9,7 @@ class Drop:
         self.width = self.image.get_width()
         self.height = self.image.get_height()
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
-        self.value = 1
+        self.value = value
 
     def draw(self):
         self.screen.blit(self.image, (self.x, self.y))

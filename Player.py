@@ -82,7 +82,7 @@ class Player:
                                     self.stats_dict.get("projectile_piercing"))
 
                 projectiles.append(fireball)
-                print("Added fireball at {}, {}".format(self.x, self.y))
+                # print("Added fireball at {}, {}".format(self.x, self.y))
             else:
                 pass
                 # print("tried adding a fireball but hasn't been long enough {} < {}".format(self.frames_since_last_shot, self.shoot_cooldown))

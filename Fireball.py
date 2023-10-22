@@ -46,7 +46,7 @@ class Fireball:
 
         # print("x: ", self.x, " y: ", self.y)
         if self.x < 0 or self.x > screen.get_width() or self.y < 0 or self.y > screen.get_height():
-            print("Fireball went off screen and was deleted")
+            # print("Fireball went off screen and was deleted")
             return False  # fireball is off screen and needs to be deleted
         else:
             return True  # fireball is still on screen

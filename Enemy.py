@@ -1,35 +1,32 @@
 import pygame
 import random
+import json
 from Gold_Coin import Gold_Coin
 from Blue_Gem import Blue_Gem
-import math
-import json
 
 
 class Enemy:
-    def __init__(self, screen):
-
+    def __init__(self, screen, config_path, image_path, drop_type, drop_rate, health, exp):
         # Load configuration from the JSON file
-        with open("configs/fallen.json", 'r') as file:
+        with open(config_path, 'r') as file:
             data = json.load(file)
 
-        # Load the image
-        image_path = data.get('image_path', 'images/fallen.png')
-
         self.screen = screen
-        self.width = data.get('width') / 100 * screen.get_width()
-        self.height = data.get('height') / 100 * screen.get_height()
+        self.image = pygame.image.load(image_path).convert_alpha()
+        self.width = self.image.get_width()
+        self.height = self.image.get_height()
         self.image = pygame.transform.scale(
-            pygame.image.load(image_path).convert_alpha(), (self.width, self.height))
+            self.image, (self.width, self.height))
 
         self.speed = data.get('speed')
-        self.drop_rate = .5
-        self.drop_type = "gold_coin"
-
         self.dx = data.get('dx')
         self.dy = data.get('dy')
-        self.immunity_frames = 0
+        self.drop_rate = drop_rate
+        self.drop_type = drop_type
+        self.health = health
         self.immunity = False
+        self.immunity_frames = 0
+        self.exp = exp
 
         self.x = 0
         self.y = 0
@@ -47,7 +44,6 @@ class Enemy:
         self.x = self.x + self.dx
         self.y = self.y + self.dy
 
-        # Set immunity on movement
         if self.immunity_frames > 0:
             self.immunity_frames -= 1
 
@@ -58,19 +54,18 @@ class Enemy:
         side = random.choice(["top", "left", "right"])
         if side == "top":
             self.x = random.randint(
-                0, self.screen.get_width() - self.screen.get_width()/10)
-            self.y = -self.screen.get_height()//10
+                0, self.screen.get_width() - self.screen.get_width() // 10)
+            self.y = -self.screen.get_height() // 10
         elif side == "left":
-            self.x = -self.screen.get_width()//10
-            self.y = random.randint(0, self.screen.get_height() -
-                                    self.screen.get_height()//10)
+            self.x = -self.screen.get_width() // 10
+            self.y = random.randint(
+                0, self.screen.get_height() - self.screen.get_height() // 10)
         else:  # "right"
-            self.x = self.screen.get_width() + self.screen.get_width()//10
-            self.y = random.randint(0, self.screen.get_height() -
-                                    self.screen.get_height()//10)
+            self.x = self.screen.get_width() + self.screen.get_width() // 10
+            self.y = random.randint(
+                0, self.screen.get_height() - self.screen.get_height() // 10)
 
-        print("spawning new enemy at on ", side,
-              "(", self.x, ", ", self.y, ")")
+        # print(f"spawning new enemy on {side} ({self.x}, {self.y})")
 
     def draw(self):
         self.screen.blit(self.image, (self.x, self.y))
@@ -80,18 +75,15 @@ class Enemy:
             self.health -= projectile.damage
             self.immunity = True
             self.immunity_frames = 6
-
         return self.health <= 0
 
     def roll_drop(self, drops):
         rand = random.random()
-        print("rand: {}".format(rand))
         if rand > self.drop_rate:
             if self.drop_type == "gold_coin":
-                print("dropping gold coin")
                 drop = Gold_Coin(self.screen, self.x +
-                                 self.width/2, self.y + self.height/2)
+                                 self.width / 2, self.y + self.height / 2)
             elif self.drop_type == "blue_gem":
                 drop = Blue_Gem(self.screen, self.x +
-                                self.width/2, self.y + self.height/2)
+                                self.width / 2, self.y + self.height / 2)
             drops.append(drop)
