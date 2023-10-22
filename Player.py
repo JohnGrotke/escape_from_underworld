@@ -11,11 +11,16 @@ class Player:
             data = json.load(file)
 
         self.screen = screen
-        self.width = data.get('width') / 100 * screen.get_width()
-        self.height = data.get('height') / 100 * screen.get_height()
+
         image_path = data.get('image')
-        self.image = pygame.transform.scale(pygame.image.load(
-            image_path).convert_alpha(), (self.width, self.height))
+        self.image = pygame.image.load(image_path)
+        self.image = self.image.convert_alpha()
+        self.width = self.image.get_width()
+        self.height = self.image.get_height()
+        self.image = pygame.transform.scale(
+            self.image, (self.width, self.height))
+
+        self.fliq_image = 0
 
         self.screen_normalization = math.sqrt(
             screen.get_width() ** 2 + screen.get_height() ** 2) / 2
@@ -38,6 +43,8 @@ class Player:
             "projectile_damage": data.get('projectile_damage'),
             "projectile_piercing": data.get('projectile_piercing'),
             "health": data.get('health'),
+            "direction": "left",
+            "gold_count": 0
         }
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
@@ -85,12 +92,41 @@ class Player:
 
     def move_left(self):
         self.x -= self.stats_dict["speed"]
+        if self.stats_dict["direction"] == "right":
+            self.image = pygame.transform.flip(self.image, 1, 0)
+        self.stats_dict["direction"] = "left"
 
     def move_right(self):
         self.x += self.stats_dict["speed"]
+        if self.stats_dict["direction"] == "left":
+            self.image = pygame.transform.flip(self.image, 1, 0)
+        self.stats_dict["direction"] = "right"
 
     def move_down(self):
         self.y += self.stats_dict["speed"]
 
     def move_up(self):
         self.y -= self.stats_dict["speed"]
+
+    def print_stats(self):
+        # Create a list of strings with formatted information from the stats_dict.
+        pretty_text = [f"{key}: {value:.2f}" if isinstance(
+            value, float) else f"{key}: {value}" for key, value in self.stats_dict.items()]
+
+        # Create a Pygame font for rendering text.
+        # You can choose a smaller font size if needed.
+        font = pygame.font.Font(None, 24)
+
+        # Create a Pygame surface with a transparent background.
+        line_height = 24  # Adjust this value based on your font size.
+        text_surface = pygame.Surface(
+            (400, line_height * len(pretty_text)), pygame.SRCALPHA)
+
+        for i, line in enumerate(pretty_text):
+            # White text color.
+            text = font.render(line, True, (255, 255, 255))
+            text_rect = text.get_rect()
+            text_rect.topleft = (0, i * line_height)
+            text_surface.blit(text, text_rect)
+
+        return text_surface

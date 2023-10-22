@@ -19,12 +19,18 @@ class Fireball:
         self.image = self.image.convert_alpha()
 
         self.speed = 8 * speed_modifier
+        self.direction = direction
 
         self.width = self.image.get_width() * size_modifier
         self.height = self.image.get_height() * size_modifier
 
         self.image = pygame.transform.scale(
             self.image, (self.width, self.height))
+
+        rads = math.atan2(self.direction[1], self.direction[0])
+        degs = -math.degrees(rads)
+        self.image = pygame.transform.rotate(self.image, degs)
+
         self.damage = 10 * damage_modifier
         self.projectile_health = 1 * piercing_modifier
 

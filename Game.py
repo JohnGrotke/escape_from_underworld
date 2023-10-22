@@ -35,6 +35,9 @@ class Game:
         self.player = Player(self.screen)
         self.upgrades = Upgrades()
         self.last_player_level = 1
+        self.enemies = []
+        self.drops = []
+        self.fireballs = []
 
         self.clock = pygame.time.Clock()
         self.fps = data.get('fps')
@@ -43,11 +46,13 @@ class Game:
         self.player = Player(self.screen)
         self.fireballs = []
         self.enemies = []
+        self.drops = []
 
     def reset_game(self):
         self.player = Player(self.screen)
         self.fireballs = []
         self.enemies = []
+        self.drops = []
         self.last_player_level = 1
 
     def game_over(self):
@@ -90,6 +95,25 @@ class Game:
 
         self.screen.blit(
             level_text, (self.screen_width / 20, self.screen_height / 40))
+
+    def draw_stats(self):
+        stats_surface = self.player.print_stats()
+
+        # Position where you want to display the stats (adjust these values as needed).
+        x, y = 10, self.screen.get_height() - stats_surface.get_height() - 10
+
+        # Display the stats on the screen.
+        self.screen.blit(stats_surface, (x, y))
+
+    def draw_drops(self):
+        for drop in self.drops:
+            drop.draw()
+
+    def check_drop_collision(self):
+        for i, drop in enumerate(self.drops):
+            if self.check_collision(self.player, drop):
+                self.player.stats_dict["gold_count"] += drop.value
+                self.drops.remove(drop)
 
     def check_player_movement(self, keys):
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
@@ -140,6 +164,7 @@ class Game:
                     if enemy.hit_killed(fireball):
                         self.enemies.remove(enemy)
                         self.player.gain_exp(enemy.exp)
+                        enemy.roll_drop(self.drops)
                     else:
                         enemy.immunity = True
                     if not fireball.pierce():
@@ -274,6 +299,12 @@ class Game:
             self.draw_background()
 
             self.draw_hud()
+
+            self.draw_stats()
+
+            self.draw_drops()
+
+            self.check_drop_collision()
 
             self.spawn_enemies()
 

@@ -1,6 +1,7 @@
 import pygame
 import json
 from Enemy import Enemy
+from Gold_Coin import Gold_Coin
 import math
 
 
@@ -27,6 +28,8 @@ class Fallen(Enemy):
         self.dx = data.get('dx')
         self.dy = data.get('dy')
         self.exp = data.get('exp')
+        self.drop_rate = .5
+        self.drop_type = "gold_coin"
 
         self.health = 10
         self.immunity = False
@@ -35,11 +38,3 @@ class Fallen(Enemy):
         self.x = 0
         self.y = 0
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
-
-    def hit_killed(self, projectile):
-        if not self.immunity:
-            self.health -= projectile.damage
-            self.immunity = True
-            self.immunity_frames = 6
-
-        return self.health <= 0

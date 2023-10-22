@@ -1,5 +1,7 @@
 import pygame
 import random
+from Gold_Coin import Gold_Coin
+from Blue_Gem import Blue_Gem
 import math
 import json
 
@@ -21,6 +23,8 @@ class Enemy:
             pygame.image.load(image_path).convert_alpha(), (self.width, self.height))
 
         self.speed = data.get('speed')
+        self.drop_rate = .5
+        self.drop_type = "gold_coin"
 
         self.dx = data.get('dx')
         self.dy = data.get('dy')
@@ -70,3 +74,24 @@ class Enemy:
 
     def draw(self):
         self.screen.blit(self.image, (self.x, self.y))
+
+    def hit_killed(self, projectile):
+        if not self.immunity:
+            self.health -= projectile.damage
+            self.immunity = True
+            self.immunity_frames = 6
+
+        return self.health <= 0
+
+    def roll_drop(self, drops):
+        rand = random.random()
+        print("rand: {}".format(rand))
+        if rand > self.drop_rate:
+            if self.drop_type == "gold_coin":
+                print("dropping gold coin")
+                drop = Gold_Coin(self.screen, self.x +
+                                 self.width/2, self.y + self.height/2)
+            elif self.drop_type == "blue_gem":
+                drop = Blue_Gem(self.screen, self.x +
+                                self.width/2, self.y + self.height/2)
+            drops.append(drop)
