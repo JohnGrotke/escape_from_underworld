@@ -44,7 +44,7 @@ class Player:
             "projectile_piercing": data.get('projectile_piercing'),
             "health": data.get('health'),
             "direction": "left",
-            "gold_count": 0
+            "gold_count": 1000
         }
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 

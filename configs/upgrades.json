@@ -1,47 +1,39 @@
 {
-    "upgrades": [
-        {
-            "upgrade_text": "Run Speed",
+    "upgrades": {
+        "Run Speed": {
             "upgrade_amount": 1.30,
             "effected_variable": "speed",
             "effect_operation": "multiply"
         },
-        {
-            "upgrade_text": "Health",
+        "Health": {
             "upgrade_amount": 1.30,
             "effected_variable": "health",
             "effect_operation": "multiply"
         },
-        {
-            "upgrade_text": "Fire Rate",
+        "Fire Rate": {
             "upgrade_amount": 2,
             "effected_variable": "shoot_cooldown",
             "effect_operation": "subtract"
         },
-        {
-            "upgrade_text": "Projectile Damage",
+        "Projectile Damage": {
             "upgrade_amount": 1.30,
             "effected_variable": "projectile_damage",
             "effect_operation": "multiply"
         },
-        {
-            "upgrade_text": "Projectile Size",
+        "Projectile Size": {
             "upgrade_amount": 1.30,
             "effected_variable": "projectile_size",
             "effect_operation": "multiply"
         },
-        {
-            "upgrade_text": "Projectile Speed",
+        "Projectile Speed": {
             "upgrade_amount": 1.30,
             "effected_variable": "projectile_speed",
             "effect_operation": "multiply"
         },
-        {
-            "upgrade_text": "Projectile Piercing",
+        "Projectile Piercing": {
             "upgrade_amount": 1,
             "effected_variable": "projectile_piercing",
             "effect_operation": "addition"
         }
-    ]
-
+    }
 }
