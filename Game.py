@@ -48,6 +48,7 @@ class Game:
         self.player = Player(self.screen)
         self.fireballs = []
         self.enemies = []
+        self.fading_enemies = []
         self.drops = []
         self.town_home_open = True
 
@@ -55,6 +56,7 @@ class Game:
         self.player = Player(self.screen)
         self.fireballs = []
         self.enemies = []
+        self.fading_enemies = []
         self.drops = []
         self.last_player_level = 1
         self.town_home_open = True
@@ -151,7 +153,7 @@ class Game:
             self.enemies.append(enemy)
 
     def check_collision(self, obj_1, obj_2):
-        if obj_1.mask.overlap(obj_2.mask, (obj_2.x - obj_1.x, obj_2.y - obj_1.y) ):
+        if obj_1.mask.overlap(obj_2.mask, (obj_2.x - obj_1.x, obj_2.y - obj_1.y)):
             return True
 
     def draw_fireballs(self):
@@ -166,6 +168,7 @@ class Game:
             for j, enemy in enumerate(self.enemies):
                 if self.check_collision(fireball, enemy):
                     if enemy.hit_killed(fireball):
+                        self.fading_enemies.append(enemy)
                         self.enemies.remove(enemy)
                         self.player.gain_exp(enemy.exp)
                         enemy.roll_drop(self.drops)
@@ -175,6 +178,14 @@ class Game:
                         self.fireballs.remove(fireball)
 
                     break
+
+    def update_fading_enemies(self):
+        for enemy in self.fading_enemies:
+            enemy.alpha -= 30
+            enemy.image.set_alpha(enemy.alpha)
+            self.screen.blit(enemy.image, (enemy.x, enemy.y))
+            if enemy.alpha <= 0:
+                self.fading_enemies.remove(enemy)
 
     def handle_shooting(self, keys):
         # Add to the counter each frame even if we didn't shoot
@@ -197,29 +208,32 @@ class Game:
             choice_2_name, choice_2 = self.upgrades.random_upgrade()
             choice_3_name, choice_3 = self.upgrades.random_upgrade()
 
-            choice_1_button = Button(self.screen, self.screen_width // 2 - 150//2, self.screen_height * 3 // 10 - 70//2, 250, 70, choice_1_name)
-            choice_2_button = Button(self.screen, self.screen_width // 2 - 150//2, self.screen_height * 5 // 10 - 70//2, 250, 70, choice_2_name)
-            choice_3_button = Button(self.screen, self.screen_width // 2 - 150//2, self.screen_height * 7 // 10 - 70//2, 250, 70, choice_3_name)
+            choice_1_button = Button(self.screen, self.screen_width // 2 - 150 //
+                                     2, self.screen_height * 3 // 10 - 70//2, 250, 70, choice_1_name)
+            choice_2_button = Button(self.screen, self.screen_width // 2 - 150 //
+                                     2, self.screen_height * 5 // 10 - 70//2, 250, 70, choice_2_name)
+            choice_3_button = Button(self.screen, self.screen_width // 2 - 150 //
+                                     2, self.screen_height * 7 // 10 - 70//2, 250, 70, choice_3_name)
 
             while not choice_selected:
                 for event in pygame.event.get():
                     if choice_1_button.draw_button():
-                        self.upgrades.apply_upgrade( self.player, choice_1_name)
+                        self.upgrades.apply_upgrade(self.player, choice_1_name)
                         choice_selected = True
 
                     if choice_2_button.draw_button():
-                        self.upgrades.apply_upgrade( self.player, choice_2_name)
+                        self.upgrades.apply_upgrade(self.player, choice_2_name)
                         choice_selected = True
 
                     if choice_3_button.draw_button():
-                        self.upgrades.apply_upgrade( self.player, choice_3_name)
+                        self.upgrades.apply_upgrade(self.player, choice_3_name)
                         choice_selected = True
                 pygame.display.flip()
 
-
     def display_leave_shop_button(self):
 
-        leave_shop_button = Button(self.screen, self.screen_width // 2 - 150//2, self.screen_height * 9 // 10 - 70//2, 150, 70, "Leave Shop")
+        leave_shop_button = Button(self.screen, self.screen_width // 2 - 150 //
+                                   2, self.screen_height * 9 // 10 - 70//2, 150, 70, "Leave Shop")
         if leave_shop_button.draw_button():
             self.town_home_open = False
 
@@ -231,7 +245,7 @@ class Game:
         town_text_rect = town_text.get_rect(
             center=(self.screen_width // 2, self.screen_height // 10))
         self.screen.blit(town_text, town_text_rect)
-        
+
         upgrade_buttons = [
             {
                 "text": "Projectile Speed",
@@ -261,15 +275,16 @@ class Game:
             button_x = button_x_start
             button_y += button_y_start
 
-            button = Button(self.screen, button_x - 350//2, button_y - 70//2, 350, 70, upgrade_text)
+            button = Button(self.screen, button_x - 350//2,
+                            button_y - 70//2, 350, 70, upgrade_text)
             if button.draw_button():
                 print("bought: {}".format(upgrade_button["upgrade_name"]))
                 if self.player.stats_dict["gold_count"] >= upgrade_button["cost"]:
-                    upgrade_button["upgrade_function"](self.player, upgrade_button["upgrade_name"])
+                    upgrade_button["upgrade_function"](
+                        self.player, upgrade_button["upgrade_name"])
                     self.player.stats_dict["gold_count"] -= upgrade_button["cost"]
                 else:
                     print("Not enough gold!")
-            
 
         self.display_leave_shop_button()
 
@@ -289,7 +304,6 @@ class Game:
 
             keys = pygame.key.get_pressed()
 
-            
             self.draw_background()
 
             self.draw_player()
@@ -311,6 +325,8 @@ class Game:
                 self.spawn_enemies()
 
                 self.update_enemies()
+
+                self.update_fading_enemies()
 
                 self.handle_shooting(keys)
 

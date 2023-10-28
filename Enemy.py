@@ -15,6 +15,7 @@ class Enemy:
         self.image = pygame.image.load(image_path).convert_alpha()
         self.width = self.image.get_width()
         self.height = self.image.get_height()
+        self.alpha = 255
 
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)

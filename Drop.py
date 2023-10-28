@@ -1,5 +1,6 @@
 import pygame
 
+
 class Drop:
     def __init__(self, screen, x, y, image_path, value):
         self.image = pygame.image.load(image_path).convert_alpha()
