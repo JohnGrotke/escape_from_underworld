@@ -15,6 +15,9 @@ class Player:
         image_path = data.get('image')
         self.image = pygame.image.load(image_path)
         self.image = self.image.convert_alpha()
+        self.rect = self.image.get_rect()
+        self.mask = pygame.mask.from_surface(self.image)
+        self.mask_image = self.mask.to_surface()
         self.width = self.image.get_width()
         self.height = self.image.get_height()
         self.image = pygame.transform.scale(
@@ -46,7 +49,6 @@ class Player:
             "direction": "left",
             "gold_count": 1000
         }
-        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
     def set_level(self, level):
         self.level = level

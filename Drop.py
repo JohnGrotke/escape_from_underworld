@@ -3,6 +3,9 @@ import pygame
 class Drop:
     def __init__(self, screen, x, y, image_path, value):
         self.image = pygame.image.load(image_path).convert_alpha()
+        self.rect = self.image.get_rect()
+        self.mask = pygame.mask.from_surface(self.image)
+        self.mask_image = self.mask.to_surface()
         self.x = x
         self.y = y
         self.screen = screen

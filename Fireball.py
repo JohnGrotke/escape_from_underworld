@@ -17,6 +17,9 @@ class Fireball:
 
         self.image = pygame.image.load(image_path)
         self.image = self.image.convert_alpha()
+        self.rect = self.image.get_rect()
+        self.mask = pygame.mask.from_surface(self.image)
+        self.mask_image = self.mask.to_surface()
 
         self.speed = 8 * speed_modifier
         self.direction = direction

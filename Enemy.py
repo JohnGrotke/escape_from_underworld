@@ -15,8 +15,13 @@ class Enemy:
         self.image = pygame.image.load(image_path).convert_alpha()
         self.width = self.image.get_width()
         self.height = self.image.get_height()
-        self.image = pygame.transform.scale(
-            self.image, (self.width, self.height))
+
+        self.rect = self.image.get_rect()
+        self.mask = pygame.mask.from_surface(self.image)
+        self.mask_image = self.mask.to_surface()
+
+        # self.image = pygame.transform.scale(
+        #     self.image, (self.width, self.height))
 
         self.speed = data.get('speed')
         self.dx = data.get('dx')
@@ -30,7 +35,6 @@ class Enemy:
 
         self.x = 0
         self.y = 0
-        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
     def move(self, goal_x, goal_y):
         dx = goal_x - self.x

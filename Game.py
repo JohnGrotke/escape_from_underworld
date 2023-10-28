@@ -74,8 +74,9 @@ class Game:
                     return
 
     def draw_background(self):
-
         self.screen.blit(self.background_image, (0, 0))
+
+    def draw_player(self):
         self.screen.blit(self.player.image, (self.player.x, self.player.y))
 
     def draw_hud(self):
@@ -150,9 +151,8 @@ class Game:
             self.enemies.append(enemy)
 
     def check_collision(self, obj_1, obj_2):
-        obj_1_rect = pygame.Rect(obj_1.x, obj_1.y, obj_1.width, obj_1.height)
-        obj_2_rect = pygame.Rect(obj_2.x, obj_2.y, obj_2.width, obj_2.height)
-        return obj_1_rect.colliderect(obj_2_rect)
+        if obj_1.mask.overlap(obj_2.mask, (obj_2.x - obj_1.x, obj_2.y - obj_1.y) ):
+            return True
 
     def draw_fireballs(self):
         for fireball in self.fireballs:
@@ -291,6 +291,8 @@ class Game:
 
             
             self.draw_background()
+
+            self.draw_player()
 
             self.draw_hud()
 
