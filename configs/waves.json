@@ -1,0 +1,49 @@
+{
+    "waves": {
+        "night_1": {
+            "wave_text": "Night 1",
+            "goblin_spawn_rate": 0.05,
+            "ogre_spawn_rate": 0.005,
+            "number_of_goblins": 10,
+            "number_of_ogres": 0,
+            "rest_period": 1000,
+            "open_town": 1
+        },
+        "night_2": {
+            "wave_text": "Night 2",
+            "goblin_spawn_rate": 0.05,
+            "ogre_spawn_rate": 0.01,
+            "number_of_goblins": 15,
+            "number_of_ogres": 1,
+            "rest_period": 1000,
+            "open_town": 1
+        },
+        "night_3": {
+            "wave_text": "Night 3",
+            "goblin_spawn_rate": 0.1,
+            "ogre_spawn_rate": 0.01,
+            "number_of_goblins": 30,
+            "number_of_ogres": 0,
+            "rest_period": 1000,
+            "open_town": 1
+        },
+        "night_4": {
+            "wave_text": "Night 4",
+            "goblin_spawn_rate": 0.1,
+            "ogre_spawn_rate": 0.01,
+            "number_of_goblins": 20,
+            "number_of_ogres": 2,
+            "rest_period": 1000,
+            "open_town": 1
+        },
+        "night_5": {
+            "wave_text": "Night 5",
+            "goblin_spawn_rate": 0.1,
+            "ogre_spawn_rate": 0.2,
+            "number_of_goblins": 30,
+            "number_of_ogres": 3,
+            "rest_period": 1000,
+            "open_town": 1
+        }
+    }
+}

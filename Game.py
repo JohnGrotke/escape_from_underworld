@@ -30,16 +30,14 @@ class Game:
         self.background_image = pygame.transform.scale(
             self.background_image, (self.screen_width, self.screen_height))
 
-        self.fallen_spawn_rate = data.get('fallen_spawn_rate')
-        self.ogre_spawn_rate = data.get('ogre_spawn_rate')
-
         self.player = Player(self.screen)
         self.upgrades = Upgrades('configs/upgrades.json')
         self.last_player_level = 1
         self.enemies = []
         self.drops = []
         self.fireballs = []
-        self.town_home_open = True
+        self.town_home_open = False
+        self.night_finished = False
 
         self.clock = pygame.time.Clock()
         self.fps = data.get('fps')
@@ -50,7 +48,14 @@ class Game:
         self.enemies = []
         self.fading_enemies = []
         self.drops = []
-        self.town_home_open = True
+        self.night = 1
+        self.number_of_goblins = 0
+        self.number_of_ogres = 0
+        self.ogre_spawn_rate = 0
+        self.goblin_spawn_rate = 0
+        self.rest_period = 0
+        self.night_finished = False
+        self.town_home_open = False
 
     def reset_game(self):
         self.player = Player(self.screen)
@@ -59,7 +64,47 @@ class Game:
         self.fading_enemies = []
         self.drops = []
         self.last_player_level = 1
-        self.town_home_open = True
+        self.night = 1
+        self.rest_period = 0
+        self.night_finished = False
+        self.town_home_open = False
+
+    def new_night(self):
+
+        if len(self.enemies) == 0 and len(self.fading_enemies) == 0:
+            with open("configs/waves.json", 'r') as file:
+                data = json.load(file)
+            wave_data = data["waves"][("night_" + str(self.night))]
+
+            print(wave_data)
+            if not self.night_finished:
+                self.town_home_open = True
+                self.night_finished = True
+
+            if self.town_home_open:
+                self.town_home()
+                pygame.display.flip()
+
+            if not self.town_home_open:
+
+                self.goblin_spawn_rate = wave_data.get('goblin_spawn_rate')
+                self.ogre_spawn_rate = wave_data.get('ogre_spawn_rate')
+                self.number_of_goblins = wave_data.get('number_of_goblins')
+                self.number_of_ogres = wave_data.get('number_of_ogres')
+                self.rest_period = wave_data.get('rest_period')
+                self.night += 1
+
+                while self.rest_period > 0:
+
+                    font = pygame.font.Font(None, 36)
+                    text = font.render(
+                        wave_data.get('wave_text'), True, (255, 0, 0))
+                    text_rect = text.get_rect(
+                        center=(self.screen_width // 2, self.screen_height // 2))
+                    self.screen.blit(text, text_rect)
+                    self.rest_period -= 1
+                    pygame.display.update()
+                self.night_finished = False
 
     def game_over(self):
         font = pygame.font.Font(None, 36)
@@ -143,14 +188,19 @@ class Game:
                 break
 
     def spawn_enemies(self):
-        if random.random() < self.ogre_spawn_rate:
-            enemy = Ogre(self.screen)
-            enemy.spawn()
-            self.enemies.append(enemy)
-        elif random.random() < self.fallen_spawn_rate:
-            enemy = Fallen(self.screen)
-            enemy.spawn()
-            self.enemies.append(enemy)
+        rand = random.random()
+        if rand < self.ogre_spawn_rate:
+            if self.number_of_ogres > 0:
+                enemy = Ogre(self.screen)
+                enemy.spawn()
+                self.number_of_ogres -= 1
+                self.enemies.append(enemy)
+        if rand < self.goblin_spawn_rate:
+            if self.number_of_goblins > 0:
+                enemy = Fallen(self.screen)
+                enemy.spawn()
+                self.number_of_goblins -= 1
+                self.enemies.append(enemy)
 
     def check_collision(self, obj_1, obj_2):
         if obj_1.mask.overlap(obj_2.mask, (obj_2.x - obj_1.x, obj_2.y - obj_1.y)):
@@ -250,19 +300,16 @@ class Game:
             {
                 "text": "Projectile Speed",
                 "cost": 100,  # Adjust the cost as needed
-                "upgrade_function": self.upgrades.apply_upgrade,
                 "upgrade_name": "Projectile Speed",
             },
             {
                 "text": "Projectile Size",
                 "cost": 200,  # Adjust the cost as needed
-                "upgrade_function": self.upgrades.apply_upgrade,
                 "upgrade_name": "Projectile Size",
             },
             {
                 "text": "Projectile Damage",
                 "cost": 300,  # Adjust the cost as needed
-                "upgrade_function": self.upgrades.apply_upgrade,
                 "upgrade_name": "Projectile Damage",
             },
         ]
@@ -280,7 +327,7 @@ class Game:
             if button.draw_button():
                 print("bought: {}".format(upgrade_button["upgrade_name"]))
                 if self.player.stats_dict["gold_count"] >= upgrade_button["cost"]:
-                    upgrade_button["upgrade_function"](
+                    self.upgrades.apply_upgrade(
                         self.player, upgrade_button["upgrade_name"])
                     self.player.stats_dict["gold_count"] -= upgrade_button["cost"]
                 else:
@@ -337,6 +384,9 @@ class Game:
                 self.check_player_movement(keys)
 
                 self.level_up()
+
+                if (self.number_of_goblins == 0 and self.number_of_ogres == 0):
+                    self.new_night()
 
             pygame.display.flip()
             self.screen.fill((0, 0, 0))
