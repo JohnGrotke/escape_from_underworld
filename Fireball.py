@@ -4,7 +4,7 @@ import json
 
 
 class Fireball:
-    def __init__(self, screen, x, y, direction, speed_modifier, size_modifier, damage_modifier, piercing_modifier):
+    def __init__(self, screen, x, y, direction, id, speed_modifier, size_modifier, damage_modifier, piercing_modifier):
 
         # Load configuration from the JSON file
         with open("configs/fireball.json", 'r') as file:
@@ -14,7 +14,7 @@ class Fireball:
         image_path = data.get('image_path', 'images/fireball.png')
 
         # Initialize other attributes from the JSON data
-
+        self.id = id
         self.image = pygame.image.load(image_path)
         self.image = self.image.convert_alpha()
         self.rect = self.image.get_rect()
@@ -34,7 +34,7 @@ class Fireball:
         degs = -math.degrees(rads)
         self.image = pygame.transform.rotate(self.image, degs)
 
-        self.damage = 10 * damage_modifier
+        self.damage = 5 * damage_modifier
         self.projectile_health = 1 * piercing_modifier
 
         self.x = x

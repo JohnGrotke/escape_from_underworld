@@ -74,7 +74,12 @@ class Game:
         if len(self.enemies) == 0 and len(self.fading_enemies) == 0:
             with open("configs/waves.json", 'r') as file:
                 data = json.load(file)
-            wave_data = data["waves"][("night_" + str(self.night))]
+            
+            night = "night_" + str(self.night)
+            if night not in data["waves"]:
+                night = "endless"
+
+            wave_data = data["waves"][night]
 
             print(wave_data)
             if not self.night_finished:
@@ -104,6 +109,7 @@ class Game:
                     self.screen.blit(text, text_rect)
                     self.rest_period -= 1
                     pygame.display.update()
+                    
                 self.night_finished = False
 
     def game_over(self):
@@ -217,15 +223,17 @@ class Game:
         for i, fireball in enumerate(self.fireballs):
             for j, enemy in enumerate(self.enemies):
                 if self.check_collision(fireball, enemy):
-                    if enemy.hit_killed(fireball):
+                    (killed, contact) = enemy.hit_killed(fireball)
+                    if killed:
                         self.fading_enemies.append(enemy)
                         self.enemies.remove(enemy)
                         self.player.gain_exp(enemy.exp)
                         enemy.roll_drop(self.drops)
-                    else:
-                        enemy.immunity = True
-                    if not fireball.pierce():
-                        self.fireballs.remove(fireball)
+                    # else:
+                    #     enemy.immunity = True
+                    if contact:
+                        if not fireball.pierce():
+                            self.fireballs.remove(fireball)
 
                     break
 

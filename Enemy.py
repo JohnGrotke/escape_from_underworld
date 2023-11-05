@@ -33,6 +33,8 @@ class Enemy:
         self.immunity = False
         self.immunity_frames = 0
         self.exp = exp
+        self.knockback_modifier = 1
+        self.hit_by = []
 
         self.x = 0
         self.y = 0
@@ -44,10 +46,13 @@ class Enemy:
         if dist > 0:
             dx = dx / dist
             dy = dy / dist
-            self.dx = dx * self.speed
-            self.dy = dy * self.speed
+            self.dx = dx * self.speed * self.knockback_modifier
+            self.dy = dy * self.speed * self.knockback_modifier
         self.x = self.x + self.dx
         self.y = self.y + self.dy
+
+        if self.knockback_modifier <= 1:
+            self.knockback_modifier = self.knockback_modifier + .1
 
         if self.immunity_frames > 0:
             self.immunity_frames -= 1
@@ -76,11 +81,20 @@ class Enemy:
         self.screen.blit(self.image, (self.x, self.y))
 
     def hit_killed(self, projectile):
-        if not self.immunity:
-            self.health -= projectile.damage
-            self.immunity = True
-            self.immunity_frames = 6
-        return self.health <= 0
+        killed = False
+        contact = projectile.id not in self.hit_by
+
+        if contact:
+            # if not self.immunity:
+                self.health -= projectile.damage
+                # self.immunity = True
+                # self.immunity_frames = 6
+                self.knockback_modifier = -1
+                self.hit_by.append(projectile.id)
+        
+        killed  = self.health <= 0
+        
+        return (killed, contact)
 
     def roll_drop(self, drops):
         rand = random.random()

@@ -20,6 +20,7 @@ class Player:
         self.mask_image = self.mask.to_surface()
         self.width = self.image.get_width()
         self.height = self.image.get_height()
+        self.shots_fired = 0
         self.image = pygame.transform.scale(
             self.image, (self.width, self.height))
 
@@ -78,10 +79,12 @@ class Player:
                                     self.x,
                                     self.y,
                                     direction_vector,
+                                    self.shots_fired, 
                                     self.stats_dict.get("projectile_speed"),
                                     self.stats_dict.get("projectile_size"),
                                     self.stats_dict.get("projectile_damage"),
                                     self.stats_dict.get("projectile_piercing"))
+                self.shots_fired += 1 
 
                 projectiles.append(fireball)
                 # print("Added fireball at {}, {}".format(self.x, self.y))

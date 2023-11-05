@@ -6,7 +6,7 @@
             "ogre_spawn_rate": 0.005,
             "number_of_goblins": 10,
             "number_of_ogres": 0,
-            "rest_period": 1000,
+            "rest_period": 300,
             "open_town": 1
         },
         "night_2": {
@@ -15,7 +15,7 @@
             "ogre_spawn_rate": 0.01,
             "number_of_goblins": 15,
             "number_of_ogres": 1,
-            "rest_period": 1000,
+            "rest_period": 300,
             "open_town": 1
         },
         "night_3": {
@@ -24,7 +24,7 @@
             "ogre_spawn_rate": 0.01,
             "number_of_goblins": 30,
             "number_of_ogres": 0,
-            "rest_period": 1000,
+            "rest_period": 300,
             "open_town": 1
         },
         "night_4": {
@@ -33,16 +33,25 @@
             "ogre_spawn_rate": 0.01,
             "number_of_goblins": 20,
             "number_of_ogres": 2,
-            "rest_period": 1000,
+            "rest_period": 300,
             "open_town": 1
         },
         "night_5": {
             "wave_text": "Night 5",
             "goblin_spawn_rate": 0.1,
-            "ogre_spawn_rate": 0.2,
+            "ogre_spawn_rate": 0.02,
             "number_of_goblins": 30,
             "number_of_ogres": 3,
-            "rest_period": 1000,
+            "rest_period": 300,
+            "open_town": 1
+        },
+        "endless": {
+            "wave_text": "Endless Mode",
+            "goblin_spawn_rate": 0.2,
+            "ogre_spawn_rate": 0.02,
+            "number_of_goblins": 999999999,
+            "number_of_ogres": 9999,
+            "rest_period": 300,
             "open_town": 1
         }
     }
