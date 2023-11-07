@@ -33,6 +33,8 @@ class Enemy:
         self.immunity = False
         self.immunity_frames = 0
         self.exp = exp
+        self.movement_bobble = 0
+        self.movement_bobble_dir = "down"
         self.knockback_modifier = 1
         self.hit_by = []
 
@@ -49,7 +51,17 @@ class Enemy:
             self.dx = dx * self.speed * self.knockback_modifier
             self.dy = dy * self.speed * self.knockback_modifier
         self.x = self.x + self.dx
-        self.y = self.y + self.dy
+        self.y = self.y + self.dy + self.movement_bobble
+
+        if self.movement_bobble_dir == "down":
+            self.movement_bobble += 1
+        if self.movement_bobble_dir == "up":
+            self.movement_bobble -= 1
+
+        if self.movement_bobble < -1:
+            self.movement_bobble_dir = "down"
+        if self.movement_bobble > 1:
+            self.movement_bobble_dir = "up"
 
         if self.knockback_modifier <= 1:
             self.knockback_modifier = self.knockback_modifier + .1
